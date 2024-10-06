@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('stylists', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password', 255);
-            $table->string('password_reset_token')->unique()->nullable();
-            $table->timestamp('reset_password_expire_at')->nullable();
-            $table->rememberToken();
+            $table->unsignedBigInteger('role_id');
+            $table->string('introduction');
             $table->timestamps();
+
+            // 外部キー制約
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
         });
     }
 
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('stylists');
     }
 };

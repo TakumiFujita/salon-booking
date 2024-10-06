@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('services', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password', 255);
-            $table->string('password_reset_token')->unique()->nullable();
-            $table->timestamp('reset_password_expire_at')->nullable();
-            $table->rememberToken();
+            $table->string('name')->unique();
+            $table->unsignedInteger('duration')->comment('サービスの所要時間（分）');
+            $table->unsignedInteger('price');
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('services');
     }
 };
