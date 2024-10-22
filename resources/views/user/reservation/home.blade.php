@@ -70,7 +70,17 @@
                         for (const weekDay of weekDays) {
                             const statusCell = document.createElement('td');
                             const status = data[weekDay][time] || ''; // ステータスを取得（存在しない場合は空）
-                            statusCell.textContent = status;
+
+                            if (status === '◯') {
+                                const link = document.createElement('a');
+                                link.href =
+                                    `/user/reservation/confirmation?service_id=${serviceId}&date=${weekDay}&time=${time}`;
+                                link.textContent = status;
+                                statusCell.appendChild(link);
+                            } else {
+                                statusCell.textContent = status;
+                            }
+
                             row.appendChild(statusCell);
                         }
 

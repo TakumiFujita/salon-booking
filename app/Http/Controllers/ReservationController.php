@@ -59,7 +59,7 @@ class ReservationController extends Controller
         $today = $now->format('Y-m-d');
         $thisWeekSchedules = Schedule::whereDate('start_time', $today)->get();
 
-        return view('user.home', compact('services', 'currentMonth', 'weekDays', 'timeSlots', 'weekSchedules'));
+        return view('user.reservation.home', compact('services', 'currentMonth', 'weekDays', 'timeSlots', 'weekSchedules'));
     }
 
     public function getSchedule(Request $request)
@@ -132,5 +132,16 @@ class ReservationController extends Controller
         })->exists();
 
         return !$existingReservations; // 重複していなければ空いている
+    }
+
+    public function confirmation(Request $request)
+    {
+        $serviceId = $request->get('service_id');
+        $date = $request->get('date');
+        $startTime = $request->get('time');
+
+        $service = Service::find($serviceId);
+
+        return view('user.reservation.confirmation', compact('service', 'date', 'startTime'));
     }
 }
