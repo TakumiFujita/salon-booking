@@ -12,5 +12,6 @@
     <p>{{ $service->duration }}分</p>
     <h5>料金</h5>
     <p>{{ $service->price }}円</p>
+    <a href="{{ route('reservation.home') }}" class="btn btn-primary">戻る</a>
     <button type="button" class="btn btn-primary">予約する</button>
 @endsection
