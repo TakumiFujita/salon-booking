@@ -13,5 +13,14 @@
     <h5>料金</h5>
     <p>{{ $service->price }}円</p>
     <a href="{{ route('reservation.home') }}" class="btn btn-primary">戻る</a>
-    <button type="button" class="btn btn-primary">予約する</button>
+    <form method="POST" action="{{ route('reservation.store') }}">
+        @csrf
+        <input type="hidden" name="service_id" value="{{ $service->id }}">
+        <input type="hidden" name="date" value="{{ $date }}">
+        <input type="hidden" name="start_time" value="{{ $startTime }}">
+        <input type="hidden" name="duration" value="{{ $service->duration }}">
+        <input type="hidden" name="price" value="{{ $service->price }}">
+
+        <button type="submit" class="btn btn-primary">予約する</button>
+    </form>
 @endsection

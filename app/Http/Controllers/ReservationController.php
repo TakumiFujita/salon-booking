@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Http\Requests\ReservationRequest;
+use App\Models\Reservation;
 use App\Models\Schedule;
 use App\Models\Service;
 use Illuminate\Support\Facades\Log;
@@ -143,5 +145,31 @@ class ReservationController extends Controller
         $service = Service::find($serviceId);
 
         return view('user.reservation.confirmation', compact('service', 'date', 'startTime'));
+    }
+
+    public function store(ReservationRequest $request)
+    {
+        $startTime = Carbon::parse($request->input('date') . ' ' . $request->input('start_time'));
+        $duration = (int) $request->input('duration');
+        $endTime = $startTime->copy()->addMinutes($duration);
+
+        $validatedData = array_merge($request->validated(), [
+            'stylist_id' => '1',
+            'user_id' => '1',
+            'start_time' => $startTime->format('Y-m-d H:i:s'),
+            'end_time' => $endTime->format('Y-m-d H:i:s'),
+            'status' => 'confirmed',
+        ]);
+
+        LOG::INFO('$validatedData：' . json_encode($validatedData));
+
+        try {
+            Reservation::create($validatedData);
+            return redirect()->route('reservation.home')->with('status', '予約が完了しました！');
+        } catch (\Exception $e) {
+            // エラーハンドリング（ログ記録やエラーメッセージ表示）
+            Log::error('予約登録時のエラー: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['msg' => '予約の登録に失敗しました。']);
+        }
     }
 }
