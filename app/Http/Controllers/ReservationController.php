@@ -67,7 +67,7 @@ class ReservationController extends Controller
         // return view('user.reservation.home', compact('services', 'currentMonth', 'weekDays', 'timeSlots', 'weekSchedules', 'schedule'));
 
         $schedules = $this->getSchedule();
-        LOG::INFO('$schedules' . json_encode($schedules));
+        // LOG::INFO('$schedules' . json_encode($schedules));
         // LOG::INFO('$weekSchedules' . json_encode($schedules['weekSchedules']));
         // LOG::INFO('$timeSlots' . json_encode($schedules['timeSlots']));
         // LOG::INFO('$weekDays' . json_encode($schedules['weekDays']));
@@ -174,13 +174,12 @@ class ReservationController extends Controller
     public function confirmation(Request $request)
     {
         // LOG::INFO('confirmation関数の中');
-        // LOG::INFO('$request' . $request);
-        // LOG::INFO('$request->get("service_id")' . $request->get('service_id'));
-        // LOG::INFO('$request->get("date")' . $request->get('date'));
-        // LOG::INFO('$request->get("time")' . $request->get('time'));
-        $serviceId = $request->get('service_id');
-        $date = $request->get('date');
-        $startTime = $request->get('time');
+        // LOG::INFO('$request->get("service_id")' . $request->input('service_id'));
+        // LOG::INFO('$request->get("date")' . $request->input('date'));
+        // LOG::INFO('$request->get("time")' . $request->input('time'));
+        $serviceId = $request->input('service_id');
+        $date = $request->input('date');
+        $startTime = $request->input('time');
 
         $service = Service::find($serviceId);
 
@@ -189,10 +188,14 @@ class ReservationController extends Controller
 
     public function store(ReservationRequest $request)
     {
+        // LOG::INFO('$request' . $request);
         $stylistId = '1';
-        $startTime = Carbon::parse($request->input('date') . ' ' . $request->input('start_time'));
+        $date = Carbon::parse($request->input('date'))->format('Y-m-d');
+        $startTime = Carbon::parse($date . ' ' . $request->input('start_time'));
+        // LOG::INFO('$startTime' . $startTime);
         $duration = (int) $request->input('duration');
         $endTime = $startTime->copy()->addMinutes($duration);
+        // LOG::INFO('$duration' . $duration);
 
         $validatedData = array_merge($request->validated(), [
             'stylist_id' => $stylistId,
