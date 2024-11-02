@@ -18,54 +18,6 @@ class ReservationController extends Controller
         $now = Carbon::now();
         $currentMonth = $now->isoFormat('YYYY年MM月');
 
-        // // 1週間分のフォーマットされた日付と曜日を配列に格納
-        // $weekDays = [];
-        // for ($i = 0; $i < 7; $i++) {
-        //     $weekDays[] = $now->copy()->addDays($i);
-        // }
-
-        // // 1日分の30分刻みの時間帯を生成するための処理
-        // $timeSlots = [];
-        // $startTime = Carbon::createFromTime(9, 0); // 9:00から
-        // $endTime = Carbon::createFromTime(20, 0);  // 20:00まで
-        // while ($startTime->lessThan($endTime)) {
-        //     // 9:00から30分刻みで時間を配列に追加
-        //     $timeSlots[] = $startTime->format('H:i');
-        //     $startTime->addMinutes(30);  // 30分加算
-        // }
-
-        // // 今週1週間分のスケジュールデータを取得
-        // // `start_time` が今日から1週間分のデータを取得するため、whereBetweenを使用
-        // $schedules = Schedule::whereBetween('start_time', [
-        //     $now->copy()->startOfDay(), // 今日の開始時間
-        //     $now->copy()->addDays(6)->endOfDay() // 6日後の終了時間まで
-        // ])->get();
-
-        // // 各日付ごとのスケジュールを格納する配列を初期化
-        // $weekSchedules = [];
-
-        // // 各日付（1週間分）と時間帯（9:00〜20:00の30分刻み）ごとに処理
-        // foreach ($weekDays as $day) {
-        //     LOG::INFO('$day：' . $day);
-        //     foreach ($timeSlots as $timeSlot) {
-        //         // 該当の日付と時間帯のスケジュールを検索
-        //         // データベースにあるstart_timeをフォーマットして、日付と時間が一致するか確認
-        //         $schedule = $schedules->first(function ($s) use ($day, $timeSlot) {
-        //             return Carbon::parse($s->start_time)->format('Y-m-d H:i') === $day->format('Y-m-d') . ' ' . $timeSlot;
-        //         });
-        //         LOG::INFO('$schedule->status：' . $schedule->status);
-        //         // スケジュールが存在し、statusが 'available' なら ◯、そうでなければ ✗
-        //         $weekSchedules[$day->format('Y-m-d')][$timeSlot] = $schedule && $schedule->status === 'available' ? '◯' : '✗';
-        //     }
-        // }
-
-        // LOG::INFO('$weekSchedules' . json_encode($weekSchedules));
-
-        // $today = $now->format('Y-m-d');
-        // $thisWeekSchedules = Schedule::whereDate('start_time', $today)->get();
-
-        // return view('user.reservation.home', compact('services', 'currentMonth', 'weekDays', 'timeSlots', 'weekSchedules', 'schedule'));
-
         $schedules = $this->getSchedule();
         // LOG::INFO('$schedules' . json_encode($schedules));
         // LOG::INFO('$weekSchedules' . json_encode($schedules['weekSchedules']));
@@ -87,22 +39,15 @@ class ReservationController extends Controller
             $weekDays[] = $now->copy()->addDays($i);
         }
 
-        // LOG::INFO('$weekDays' . json_encode($weekDays));
-
         // 時間スロットの設定
         $timeSlots = $this->generateTimeSlots();
         $weekSchedules = $this->getWeekSchedules($weekDays, $timeSlots, $serviceId, $duration);
 
-        // dd($weekSchedules);
-        // LOG::INFO($weekSchedules);
-
-        // return response()->json($weekSchedules);
         return [
             'weekSchedules' => $weekSchedules,
             'timeSlots' => $timeSlots,
             'weekDays' => $weekDays,
         ];
-        // return $weekDays;
     }
 
     private function generateTimeSlots()
@@ -120,21 +65,11 @@ class ReservationController extends Controller
     private function getWeekSchedules($weekDays, $timeSlots, $serviceId, $duration = null)
     {
         $now = Carbon::now();
-        // LOG::INFO('$now' . $now);
-        // LOG::INFO('$now->startOfDay()' . $now->startOfDay());
-        // LOG::INFO('$now->addDays(6)->endOfDay()' . $now->addDays(6)->endOfDay());
-        // $schedules = Schedule::whereBetween('start_time', [
-        //     $now->copy()->setTime(9, 0),
-        //     $now->addDays(6)->endOfDay()
-        // ])->get();
 
         $start = $now->copy()->setTime(9, 0); // 今日の09:00
         $end = $now->copy()->addDays(6)->setTime(19, 30); // 6日後の19:30
 
         $schedules = Schedule::whereBetween('start_time', [$start, $end])->get();
-        // LOG::INFO('$schedules' . json_encode($schedules));
-        // LOG::INFO('$weekDays' . json_encode($weekDays));
-        // LOG::INFO('$timeSlots' . json_encode($timeSlots));
 
         $weekSchedules = [];
         foreach ($weekDays as $day) {
@@ -142,22 +77,15 @@ class ReservationController extends Controller
                 $schedule = $schedules->first(function ($s) use ($day, $timeSlot) {
                     return Carbon::parse($s->start_time)->format('Y-m-d H:i') === $day->format('Y-m-d') . ' ' . $timeSlot;
                 });
-                // LOG::INFO('$schedules' . json_encode($schedules));
-                // LOG::INFO('$weekSchedules[$day->format('Y-m-d')][$timeSlot]'.$weekSchedules[$day->format('Y-m-d')][$timeSlot]);
-                // LOG::INFO('$schedule->status' . $schedule->status);
+
                 // スケジュールが存在するか確認し、利用可能かどうかを判断
                 if ($schedule) {
                     $weekSchedules[$day->format('Y-m-d')][$timeSlot] = $schedule->status === 'available' ? '◯' : '✗';
-                    // LOG::INFO('$weekSchedules[$day->format("Y-m-d")][$timeSlot]' . $weekSchedules[$day->format("Y-m-d")][$timeSlot]);
                 } else {
                     $weekSchedules[$day->format('Y-m-d')][$timeSlot] = 'unavailable';
-
-                    // LOG::INFO('$schedule->status(false)' . $schedule->status);
                 }
             }
         }
-        // LOG::INFO('$weekSchedules' . json_encode($weekSchedules));
-
         return $weekSchedules;
     }
 
@@ -228,7 +156,6 @@ class ReservationController extends Controller
             Reservation::create($validatedData);
 
             return redirect()->route('reservation.home')->with('status', '予約が完了しました！');
-            // return redirect()->action([self::class, 'home']);
         } catch (\Exception $e) {
             // エラーハンドリング（ログ記録やエラーメッセージ表示）
             Log::error('予約登録時のエラー: ' . $e->getMessage());
