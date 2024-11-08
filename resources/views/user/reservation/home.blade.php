@@ -21,6 +21,9 @@
         <p class="fs-3">日付を選択してください</p>
         <div id="schedule">
             <h3>予約状況</h3>
+            @error('time')
+                <div class="alert alert-danger">{{ $message }}</div>
+            @enderror
             <table id="time-slots" class="table">
                 <thead>
                     <tr>

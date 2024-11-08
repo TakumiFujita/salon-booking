@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ConfirmationRequest;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Http\Requests\ReservationRequest;
@@ -99,12 +100,8 @@ class ReservationController extends Controller
         return !$existingReservations; // 重複していなければ空いている
     }
 
-    public function confirmation(Request $request)
+    public function confirmation(ConfirmationRequest $request)
     {
-        // LOG::INFO('confirmation関数の中');
-        // LOG::INFO('$request->get("service_id")' . $request->input('service_id'));
-        // LOG::INFO('$request->get("date")' . $request->input('date'));
-        // LOG::INFO('$request->get("time")' . $request->input('time'));
         $serviceId = $request->input('service_id');
         $date = $request->input('date');
         $startTime = $request->input('time');
