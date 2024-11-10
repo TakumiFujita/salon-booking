@@ -9,7 +9,9 @@ use App\Http\Requests\ReservationRequest;
 use App\Models\Reservation;
 use App\Models\Schedule;
 use App\Models\Service;
+use App\Mail\ConfirmReservationSalon2User;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class ReservationController extends Controller
 {
@@ -151,8 +153,10 @@ class ReservationController extends Controller
 
         try {
             Reservation::create($validatedData);
+            // LOG::INFO("validatedData" . $validatedData);
+            Mail::to('test-to@mail.com')->send(new ConfirmReservationSalon2User($validatedData));
 
-            return redirect()->route('reservation.home')->with('status', '予約が完了しました！');
+            return redirect()->route('reservation.home')->with('status', '予約が完了しました！確認メールを送信しておりますので、もし届いていない場合はお手数ですが直接お店へご連絡ください');
         } catch (\Exception $e) {
             // エラーハンドリング（ログ記録やエラーメッセージ表示）
             Log::error('予約登録時のエラー: ' . $e->getMessage());
