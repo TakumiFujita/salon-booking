@@ -115,14 +115,11 @@ class ReservationController extends Controller
 
     public function store(ReservationRequest $request)
     {
-        // LOG::INFO('$request' . $request);
         $stylistId = '1';
         $date = Carbon::parse($request->input('date'))->format('Y-m-d');
         $startTime = Carbon::parse($date . ' ' . $request->input('start_time'));
-        // LOG::INFO('$startTime' . $startTime);
         $duration = (int) $request->input('duration');
         $endTime = $startTime->copy()->addMinutes($duration);
-        // LOG::INFO('$duration' . $duration);
 
         $validatedData = array_merge($request->validated(), [
             'stylist_id' => $stylistId,
@@ -132,7 +129,7 @@ class ReservationController extends Controller
             'status' => 'confirmed',
         ]);
 
-        // LOG::INFO('$validatedData：' . json_encode($validatedData));
+        $reservedServiceName = Service::where('id', $validatedData['service_id'])->pluck('name')->first();
 
         // Schedulesテーブルから予約開始時刻を特定
         $schedule_startTime = Schedule::where('stylist_id', $stylistId)
@@ -153,13 +150,11 @@ class ReservationController extends Controller
 
         try {
             Reservation::create($validatedData);
-            // LOG::INFO("validatedData" . $validatedData);
-            Mail::to('test-to@mail.com')->send(new ConfirmReservationSalon2User($validatedData));
+            Mail::to('test-to@mail.com')->send(new ConfirmReservationSalon2User((object)$validatedData, $reservedServiceName));
 
             return redirect()->route('reservation.home')->with('status', '予約が完了しました！確認メールを送信しておりますので、もし届いていない場合はお手数ですが直接お店へご連絡ください');
         } catch (\Exception $e) {
             // エラーハンドリング（ログ記録やエラーメッセージ表示）
-            Log::error('予約登録時のエラー: ' . $e->getMessage());
             return redirect()->back()->withErrors(['msg' => '予約の登録に失敗しました。']);
         }
     }

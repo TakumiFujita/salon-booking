@@ -14,6 +14,7 @@ class ConfirmReservationSalon2User extends Mailable
     use Queueable, SerializesModels;
 
     public $validatedData;
+    public $reservedServiceName;
     public $user;
 
     /**
@@ -22,9 +23,10 @@ class ConfirmReservationSalon2User extends Mailable
      * @param $validatedData
      * @param $user
      */
-    public function __construct($validatedData)
+    public function __construct($validatedData, $reservedServiceName)
     {
         $this->validatedData = $validatedData;
+        $this->reservedServiceName = $reservedServiceName;
         // $this->user = $user;
     }
 
@@ -47,6 +49,7 @@ class ConfirmReservationSalon2User extends Mailable
             view: 'emails.salons.reservation_completed',
             with: [
                 'validatedData' => $this->validatedData,
+                'reservedServiceName' => $this->reservedServiceName,
             ]
         );
     }
