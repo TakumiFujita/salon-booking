@@ -7,6 +7,7 @@ use Illuminate\Validation\Validator;
 use App\Models\Service;
 use App\Models\Reservation;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ConfirmationRequest extends FormRequest
 {
@@ -49,17 +50,12 @@ class ConfirmationRequest extends FormRequest
             $endDateTime = $startDateTime->copy()->addMinutes($duration);
 
             // 重複する予約がないかチェック
-            $conflictingReservation = Reservation::where('service_id', $serviceId)
-                ->where('date', $date)
-                ->where(function ($query) use ($startDateTime, $endDateTime) {
-                    $query->whereBetween('start_time', [$startDateTime, $endDateTime])
-                        ->orWhereBetween('end_time', [$startDateTime, $endDateTime])
-                        ->orWhere(function ($query) use ($startDateTime, $endDateTime) {
-                            $query->where('start_time', '<=', $startDateTime)
-                                ->where('end_time', '>=', $endDateTime);
-                        });
-                })
-                ->exists();
+            // ・予約テーブルのstart_timeが今回のサービス開始〜終了（-1分）時刻に被っていないこと
+            // ・予約テーブルのend_timeが今回のサービス開始（+1分）〜終了時刻に被っていないこと
+            $conflictingReservation = Reservation::where(function ($query) use ($startDateTime, $endDateTime) {
+                $query->whereBetween('start_time', [$startDateTime, $endDateTime->subSecond()])
+                    ->orWhereBetween('end_time', [$startDateTime->addSecond(), $endDateTime]);
+            })->exists();
 
             if ($conflictingReservation) {
                 $validator->errors()->add('time', '選択したサービスの終了時間が既に予約済みの時間帯と重なっています。別の時間を選択してください。');
