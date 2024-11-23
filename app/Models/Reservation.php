@@ -9,6 +9,11 @@ class Reservation extends Model
 {
     use HasFactory;
 
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
+    }
+
     protected $fillable = [
         'stylist_id',
         'service_id',
@@ -18,5 +23,11 @@ class Reservation extends Model
         'end_time',
         'status',
         'price',
+    ];
+
+    protected $casts = [
+        'date' => 'datetime',
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
     ];
 }

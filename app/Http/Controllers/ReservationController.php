@@ -26,7 +26,10 @@ class ReservationController extends Controller
         // LOG::INFO('$weekSchedules' . json_encode($schedules['weekSchedules']));
         // LOG::INFO('$timeSlots' . json_encode($schedules['timeSlots']));
         // LOG::INFO('$weekDays' . json_encode($schedules['weekDays']));
-        return view('user.reservation.home', compact('services', 'currentMonth', 'schedules'));
+
+        $todayReservations = Reservation::whereDate('start_time', $now->format('Y-m-d'))->orderBy('start_time', 'asc')->get();
+
+        return view('user.reservation.home', compact('services', 'currentMonth', 'schedules', 'now', 'todayReservations'));
     }
 
     public function getSchedule(int $serviceId = 1)
