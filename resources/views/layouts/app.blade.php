@@ -35,6 +35,7 @@
 
 <body>
     <div id="app">
+        @include('components.header')
         <main>
             <div class="container">
                 <!-- Main content will be injected here -->

@@ -18,7 +18,8 @@ class UsersSeeder extends Seeder
         DB::table('users')->insert([
             [
                 'name' => 'ユーザー1',
-                'email' => 'user1@example.com',
+                'email' => 'user1@mail.com',
+                'email_verified_at' => now(),
                 'password' => Hash::make('password123'), // ハッシュ化したパスワード
                 'password_reset_token' => Str::random(60),
                 'reset_password_expire_at' => now()->addMinutes(30),
@@ -27,7 +28,8 @@ class UsersSeeder extends Seeder
             ],
             [
                 'name' => 'ユーザー2',
-                'email' => 'user2@example.com',
+                'email' => 'user2@mail.com',
+                'email_verified_at' => now(),
                 'password' => Hash::make('password123'), // ハッシュ化したパスワード
                 'password_reset_token' => Str::random(60),
                 'reset_password_expire_at' => now()->addMinutes(30),
@@ -36,7 +38,8 @@ class UsersSeeder extends Seeder
             ],
             [
                 'name' => 'ユーザー3',
-                'email' => 'user3@example.com',
+                'email' => 'user3@mail.com',
+                'email_verified_at' => now(),
                 'password' => Hash::make('password123'), // ハッシュ化したパスワード
                 'password_reset_token' => Str::random(60),
                 'reset_password_expire_at' => now()->addMinutes(30),
