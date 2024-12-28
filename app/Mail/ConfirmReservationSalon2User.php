@@ -15,19 +15,20 @@ class ConfirmReservationSalon2User extends Mailable
 
     public $validatedData;
     public $reservedServiceName;
-    public $user;
+    public $userName;
 
     /**
      * Create a new message instance.
      *
      * @param $validatedData
-     * @param $user
+     * @param $reservedServiceName
+     * @param $userName
      */
-    public function __construct($validatedData, $reservedServiceName)
+    public function __construct($validatedData, $reservedServiceName, $userName)
     {
         $this->validatedData = $validatedData;
         $this->reservedServiceName = $reservedServiceName;
-        // $this->user = $user;
+        $this->userName = $userName;
     }
 
     /**
@@ -50,6 +51,7 @@ class ConfirmReservationSalon2User extends Mailable
             with: [
                 'validatedData' => $this->validatedData,
                 'reservedServiceName' => $this->reservedServiceName,
+                'userName' => $this->userName,
             ]
         );
     }

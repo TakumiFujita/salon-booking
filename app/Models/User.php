@@ -11,6 +11,11 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
     /**
      * The attributes that are mass assignable.
      *
