@@ -9,6 +9,7 @@ use App\Http\Requests\ReservationRequest;
 use App\Models\Reservation;
 use App\Models\Schedule;
 use App\Models\Service;
+use App\Models\User;
 use App\Mail\ConfirmReservationSalon2User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -22,10 +23,6 @@ class ReservationController extends Controller
         $currentMonth = $now->isoFormat('YYYY年MM月');
 
         $schedules = $this->getSchedule();
-        // LOG::INFO('$schedules' . json_encode($schedules));
-        // LOG::INFO('$weekSchedules' . json_encode($schedules['weekSchedules']));
-        // LOG::INFO('$timeSlots' . json_encode($schedules['timeSlots']));
-        // LOG::INFO('$weekDays' . json_encode($schedules['weekDays']));
 
         $todayReservations = Reservation::whereDate('start_time', $now->format('Y-m-d'))->orderBy('start_time', 'asc')->get();
 
@@ -47,7 +44,8 @@ class ReservationController extends Controller
 
         // 時間スロットの設定
         $timeSlots = $this->generateTimeSlots();
-        $weekSchedules = $this->getWeekSchedules($weekDays, $timeSlots, $serviceId, $duration);
+        $result = $this->getWeekSchedules($weekDays, $timeSlots, $serviceId, $duration);
+        $weekSchedules = $result;
 
         return [
             'weekSchedules' => $weekSchedules,
@@ -78,18 +76,23 @@ class ReservationController extends Controller
         $schedules = Schedule::whereBetween('start_time', [$start, $end])->get();
 
         $weekSchedules = [];
+        $isPasts = [];
         foreach ($weekDays as $day) {
             foreach ($timeSlots as $timeSlot) {
                 $schedule = $schedules->first(function ($s) use ($day, $timeSlot) {
                     return Carbon::parse($s->start_time)->format('Y-m-d H:i') === $day->format('Y-m-d') . ' ' . $timeSlot;
                 });
 
-                // スケジュールが存在するか確認し、利用可能かどうかを判断
+                // 現在時刻より前かどうかを判断
+                $isPast = false;
                 if ($schedule) {
-                    $weekSchedules[$day->format('Y-m-d')][$timeSlot] = $schedule->status === 'available' ? '◯' : '✗';
-                } else {
-                    $weekSchedules[$day->format('Y-m-d')][$timeSlot] = 'unavailable';
+                    $isPast = Carbon::parse($schedule->start_time)->lessThan($now);
                 }
+                // スケジュールの状態と過ぎているかどうかの情報をweekSchedulesに格納
+                $weekSchedules[$day->format('Y-m-d')][$timeSlot] = [
+                    'status' => $schedule ? ($schedule->status === 'available' ? '◯' : '✗') : 'unavailable',
+                    'isPast' => $isPast,
+                ];
             }
         }
         return $weekSchedules;
@@ -153,7 +156,8 @@ class ReservationController extends Controller
 
         try {
             Reservation::create($validatedData);
-            Mail::to('test-to@mail.com')->send(new ConfirmReservationSalon2User((object)$validatedData, $reservedServiceName));
+            $user = User::where('id', $validatedData['user_id'])->first();
+            Mail::to('test-to@mail.com')->send(new ConfirmReservationSalon2User((object)$validatedData, $reservedServiceName, $user->name));
 
             return redirect()->route('reservation.home')->with('status', '予約が完了しました！確認メールを送信しておりますので、もし届いていない場合はお手数ですが直接お店へご連絡ください');
         } catch (\Exception $e) {

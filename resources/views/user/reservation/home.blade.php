@@ -52,13 +52,35 @@
                                 <th>{{ $timeSlot }}</th>
                                 @foreach ($schedules['weekDays'] as $innerIndex => $weekDay)
                                     <td>
-                                        @if ($schedules['weekSchedules'][$weekDay->format('Y-m-d')][$timeSlot] === '◯')
-                                            <button type="submit" class="btn btn-link"
-                                                onclick="setReservation('{{ $weekDay }}', '{{ $timeSlot }}')">◯</button>
-                                        @elseif ($schedules['weekSchedules'][$weekDay->format('Y-m-d')][$timeSlot] === '✗')
+                                        @php
+                                            // weekSchedules[$weekDay->format('Y-m-d')] は日付ごとに存在し、各時間スロットの情報が格納されています
+                                            $scheduleData =
+                                                $schedules['weekSchedules'][$weekDay->format('Y-m-d')][$timeSlot] ??
+                                                null;
+                                        @endphp
+                                        @if (!$scheduleData || $scheduleData['isPast'])
                                             <button class="btn" disabled
                                                 style="border-color: transparent; opacity: 1;">✗</button>
+                                        @else
+                                            <button type="submit" class="btn btn-link"
+                                                onclick="setReservation('{{ $weekDay->format('Y-m-d') }}', '{{ $timeSlot }}')">
+                                                {{ $scheduleData['status'] }}
+                                            </button>
                                         @endif
+                                        {{-- @if ($scheduleData)
+                                            @if ($scheduleData['isPast'])
+                                                <button class="btn" disabled
+                                                    style="border-color: transparent; opacity: 1;">✗</button>
+                                            @else
+                                                <button type="submit" class="btn btn-link"
+                                                    onclick="setReservation('{{ $weekDay->format('Y-m-d') }}', '{{ $timeSlot }}')">
+                                                    {{ $scheduleData['status'] }}
+                                                </button>
+                                            @endif
+                                        @else
+                                            <button class="btn" disabled
+                                                style="border-color: transparent; opacity: 1;">✗</button>
+                                        @endif --}}
                                     </td>
                                 @endforeach
                             </tr>
