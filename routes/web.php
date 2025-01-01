@@ -5,7 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ReservationController;
-use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\StripeController;
 
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register')->middleware('guest');
 
@@ -20,3 +20,5 @@ Route::middleware('auth')->group(function () {
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login')->middleware('guest');
 Route::post('login', [LoginController::class, 'login'])->middleware('guest');
 Route::post('logout', [LogoutController::class, 'logout'])->name('logout');
+
+Route::post('/checkout-payment', [StripeController::class, 'checkout'])->name('checkout.session');

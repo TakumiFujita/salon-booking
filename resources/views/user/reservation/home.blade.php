@@ -6,7 +6,17 @@
         @if ($todayReservations->isNotEmpty())
             @foreach ($todayReservations as $reservation)
                 <tr>
-                    <td>・{{ $reservation->start_time->isoFormat('HH時mm分') }}〜：{{ $reservation->service->name }}
+                    <td>
+                        ・{{ $reservation->start_time->isoFormat('HH時mm分') }}〜：
+                        {{ $reservation->service->name }}&nbsp;
+                        <form method="POST"
+                            action="{{ route('checkout.session', ['service_id' => $reservation->service_id]) }}"
+                            id="stripe-form">
+                            @csrf
+                            <input type="hidden" name="service_id" value={{ $reservation->service_id }}>
+                            <button type="submit" id="card-button" class="btn btn-sm btn-primary">決済をする</button>
+                        </form>
+                    </td>
                 </tr>
                 @unless ($loop->last)
                     <br>

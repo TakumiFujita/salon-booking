@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'stripe' => [
+        'prices' => [
+            1 => env('STRIPE_PRICE_ID_CUT'),
+            2 => env('STRIPE_PRICE_ID_CUT_COLOR'),
+            3 => env('STRIPE_PRICE_ID_CUT_PERM'),
+            4 => env('STRIPE_PRICE_ID_SHAMPOO_BLOW'),
+            5 => env('STRIPE_PRICE_ID_TREATMENT'),
+        ]
+    ]
 ];
