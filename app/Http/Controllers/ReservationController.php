@@ -29,6 +29,17 @@ class ReservationController extends Controller
         return view('user.reservation.home', compact('services', 'currentMonth', 'schedules', 'now', 'todayReservations'));
     }
 
+    public function redirect(Request $request)
+    {
+        if ($request->query('status') === 'success') {
+            session()->flash('message', '決済が成功しました！');
+        } elseif ($request->query('status') === 'cancel') {
+            session()->flash('message', '決済がキャンセルされました。');
+        }
+
+        return redirect()->route('reservation.home');
+    }
+
     public function getSchedule(int $serviceId = 1)
     {
         // $serviceId = $request->get('service_id');

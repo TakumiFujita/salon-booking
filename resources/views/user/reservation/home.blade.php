@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+    @if (session('message'))
+        <div class="alert alert-info">
+            {{ session('message') }}
+        </div>
+    @endif
     <div class="container py-5">
         <h3>本日（{{ $now->isoFormat('YYYY年MM月DD日') }}）のご予約状況</h3>
         @if ($todayReservations->isNotEmpty())

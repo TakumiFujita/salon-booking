@@ -11,6 +11,8 @@ Route::get('register', [RegisterController::class, 'showRegistrationForm'])->nam
 
 Route::middleware('auth')->group(function () {
   Route::get('/user/reservation/home', [ReservationController::class, 'home'])->name('reservation.home');
+  // リダイレクト処理用のルート
+  Route::get('/user/reservation/redirect', [ReservationController::class, 'redirect'])->name('reservation.redirect');
   Route::get('/get-schedule', [ReservationController::class, 'getSchedule']);
   Route::get('/user/reservation/confirmation', [ReservationController::class, 'confirmation'])->name('reservation.confirmation');
   Route::post('/user/reservation/store', [ReservationController::class, 'store'])->name('reservation.store');
