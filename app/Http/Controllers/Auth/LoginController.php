@@ -18,7 +18,7 @@ class LoginController extends Controller
 
     public function showLoginForm(): View
     {
-        return view('auth.login');
+        return view('auth.user_login');
     }
 
     public function login(LoginUserRequest $request): RedirectResponse
@@ -28,10 +28,8 @@ class LoginController extends Controller
         // 認証を試みる
         if (Auth::attempt($validatedData)) {
             $request->session()->regenerate();
-
-            return redirect()->intended('reservation.home');
+            return redirect()->intended(route('reservation.home'));
         }
-
         return back()->withErrors([
             'email' => 'ログイン情報が正しくありません。'
         ])->onlyInput('email');

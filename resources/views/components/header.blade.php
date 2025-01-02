@@ -9,25 +9,11 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                @auth
-                    <li class="nav-item">
-                        <span class="nav-link" style="color: #ffffff;">ようこそ, {{ Auth::user()->name }} さん</span>
-                    </li>
-                    <li class="nav-item">
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-danger">
-                                ログアウト
-                            </button>
-                        </form>
-                    </li>
-                @else
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login') }}" style="color: #ffffff;">ログイン</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('register') }}" style="color: #ffffff;">ユーザー登録</a>
-                    </li>
+                @auth('web')
+                    @include('components.user_header')
+                @endauth
+                @auth('stylist')
+                    @include('components.stylist_header')
                 @endauth
             </ul>
         </div>

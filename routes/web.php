@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\StripeController;
+use App\Http\Controllers\StylistController;
 
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register')->middleware('guest');
 
@@ -24,3 +25,12 @@ Route::post('login', [LoginController::class, 'login'])->middleware('guest');
 Route::post('logout', [LogoutController::class, 'logout'])->name('logout');
 
 Route::post('/checkout-payment', [StripeController::class, 'checkout'])->name('checkout.session');
+
+Route::prefix('stylist')->name('stylist.')->group(function () {
+  //スタイリスト用ログイン
+  Route::get('login', [StylistController::class, 'showLoginForm'])->name('login');
+  Route::post('login', [StylistController::class, 'login']);
+  Route::post('logout', [StylistController::class, 'logout'])->name('logout');
+
+  Route::get('home', [StylistController::class, 'home'])->name('home');
+});

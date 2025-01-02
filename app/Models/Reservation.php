@@ -19,6 +19,11 @@ class Reservation extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function stylist()
+    {
+        return $this->belongsTo(Stylist::class);
+    }
+
     protected $fillable = [
         'stylist_id',
         'service_id',
