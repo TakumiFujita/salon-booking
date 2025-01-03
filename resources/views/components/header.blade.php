@@ -9,12 +9,18 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                @auth('web')
+                @php
+                    $isUserLoggedIn = Auth::guard('web')->check();
+                    $isStylistLoggedIn = Auth::guard('stylist')->check();
+                @endphp
+
+                @if ($isUserLoggedIn)
                     @include('components.user_header')
-                @endauth
-                @auth('stylist')
+                @elseif ($isStylistLoggedIn)
                     @include('components.stylist_header')
-                @endauth
+                @else
+                    <!-- ログインしていない場合の処理 -->
+                @endif
             </ul>
         </div>
     </div>

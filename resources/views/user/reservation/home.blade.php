@@ -30,7 +30,7 @@
         @else
             <p>本日の予約はありません</p>
         @endif
-        <form action="{{ route('reservation.confirmation') }}" method="GET">
+        <form action="{{ route('user.reservation.confirmation') }}" method="GET">
             @csrf
             <h3 class="mt-5">サービスを選択してください</h3>
             <select id="service-select" class="form-select" name="service_id">

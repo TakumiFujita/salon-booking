@@ -15,8 +15,8 @@ class StripeController extends Controller
         session()->flash('stripe_cancel_message', '決済がキャンセルされました。');
 
         return $request->user()->checkout([$stripe_price_id => 1], [
-            'success_url' => route('reservation.redirect', ['status' => 'success']),
-            'cancel_url' => route('reservation.redirect', ['status' => 'cancel']),
+            'success_url' => route('user.reservation.redirect', ['status' => 'success']),
+            'cancel_url' => route('user.reservation.redirect', ['status' => 'cancel']),
         ]);
     }
 }

@@ -19,6 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if (request()->is('stylist*')) {
+            config(['session.cookie' => config('session.cookie_stylist')]);
+        }
     }
 }

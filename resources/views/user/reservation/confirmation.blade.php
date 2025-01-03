@@ -12,8 +12,8 @@
     <p>{{ $service->duration }}分</p>
     <h5>料金</h5>
     <p>{{ $service->price }}円</p>
-    <a href="{{ route('reservation.home') }}" class="btn btn-primary">戻る</a>
-    <form method="POST" action="{{ route('reservation.store') }}">
+    <a href="{{ route('user.reservation.home') }}" class="btn btn-primary">戻る</a>
+    <form method="POST" action="{{ route('user.reservation.store') }}">
         @csrf
         <input type="hidden" name="service_id" value="{{ $service->id }}">
         <input type="hidden" name="date" value="{{ $date }}">

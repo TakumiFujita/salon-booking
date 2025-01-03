@@ -37,7 +37,7 @@ class ReservationController extends Controller
             session()->flash('message', '決済がキャンセルされました。');
         }
 
-        return redirect()->route('reservation.home');
+        return redirect()->route('user.reservation.home');
     }
 
     public function getSchedule(int $serviceId = 1)
@@ -170,7 +170,7 @@ class ReservationController extends Controller
             $user = User::where('id', $validatedData['user_id'])->first();
             Mail::to('test-to@mail.com')->send(new ConfirmReservationSalon2User((object)$validatedData, $reservedServiceName, $user->name));
 
-            return redirect()->route('reservation.home')->with('status', '予約が完了しました！確認メールを送信しておりますので、もし届いていない場合はお手数ですが直接お店へご連絡ください');
+            return redirect()->route('user.reservation.home')->with('status', '予約が完了しました！確認メールを送信しておりますので、もし届いていない場合はお手数ですが直接お店へご連絡ください');
         } catch (\Exception $e) {
             // エラーハンドリング（ログ記録やエラーメッセージ表示）
             return redirect()->back()->withErrors(['msg' => '予約の登録に失敗しました。']);

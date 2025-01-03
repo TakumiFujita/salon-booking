@@ -36,6 +36,6 @@ class RegisterController extends Controller
         // ユーザーをログイン
         Auth::login($user);
 
-        return redirect()->route('reservation.home');
+        return redirect()->route('user.reservation.home');
     }
 }
