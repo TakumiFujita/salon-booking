@@ -173,7 +173,7 @@ class ReservationController extends Controller
             $stylist = Stylist::where('id', $validatedData['stylist_id'])->first();
 
             // 利用者への予約完了メール
-            Mail::to('test-to@mail.com')->send(new ConfirmReservationSalon2User((object)$validatedData, $reservedServiceName, $user->name));
+            Mail::to($user->email)->send(new ConfirmReservationSalon2User((object)$validatedData, $reservedServiceName, $user->name));
             // スタイリストへの新規予約通知メール
             Mail::to($stylist->email)->send(new ReservationNotificationSalon2Stylist((object)$validatedData, $reservedServiceName, $user->name, $stylist->name));
 
