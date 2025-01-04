@@ -11,6 +11,8 @@ use App\Models\Schedule;
 use App\Models\Service;
 use App\Models\User;
 use App\Mail\ConfirmReservationSalon2User;
+use App\Mail\ReservationNotificationSalon2Stylist;
+use App\Models\Stylist;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -168,7 +170,12 @@ class ReservationController extends Controller
         try {
             Reservation::create($validatedData);
             $user = User::where('id', $validatedData['user_id'])->first();
+            $stylist = Stylist::where('id', $validatedData['stylist_id'])->first();
+
+            // 利用者への予約完了メール
             Mail::to('test-to@mail.com')->send(new ConfirmReservationSalon2User((object)$validatedData, $reservedServiceName, $user->name));
+            // スタイリストへの新規予約通知メール
+            Mail::to($stylist->email)->send(new ReservationNotificationSalon2Stylist((object)$validatedData, $reservedServiceName, $user->name, $stylist->name));
 
             return redirect()->route('user.reservation.home')->with('status', '予約が完了しました！確認メールを送信しておりますので、もし届いていない場合はお手数ですが直接お店へご連絡ください');
         } catch (\Exception $e) {
