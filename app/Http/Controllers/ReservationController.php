@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ConfirmationRequest;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Http\Requests\ReservationRequest;
 use App\Models\Reservation;
@@ -13,8 +12,10 @@ use App\Models\User;
 use App\Mail\ConfirmReservationSalon2User;
 use App\Mail\ReservationNotificationSalon2Stylist;
 use App\Models\Stylist;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
@@ -142,7 +143,7 @@ class ReservationController extends Controller
 
         $validatedData = array_merge($request->validated(), [
             'stylist_id' => $stylistId,
-            'user_id' => '1',
+            'user_id' => Auth::id(),
             'start_time' => $startTime->format('Y-m-d H:i:s'),
             'end_time' => $endTime->format('Y-m-d H:i:s'),
             'status' => 'confirmed',
