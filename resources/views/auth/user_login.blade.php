@@ -2,7 +2,7 @@
 @section('card-header')
     <h4>Login for User</h4>
 @endsection
-@section('content')
+@section('form')
     <form method="POST" action="{{ route('login') }}">
         @csrf
         <div class="mb-3">

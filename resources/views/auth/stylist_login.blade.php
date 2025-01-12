@@ -2,7 +2,7 @@
 @section('card-header')
     <h4>Login for Stylist</h4>
 @endsection
-@section('content')
+@section('form')
     <form method="POST" action="{{ route('stylist.login') }}">
         @csrf
         <div class="mb-3">

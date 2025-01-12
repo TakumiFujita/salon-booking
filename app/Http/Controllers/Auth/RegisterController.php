@@ -6,11 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterUserRequest;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -22,7 +21,7 @@ class RegisterController extends Controller
 
     public function register(RegisterUserRequest $request): RedirectResponse
     {
-        $validatedData = $request->validated();
+        $validatedUserData = $request->validated();
 
         $user = User::create([
             'name' => $request->name,
@@ -30,12 +29,12 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // ユーザー登録イベントを発行
-        event(new Registered($user));
-
         // ユーザーをログイン
         Auth::login($user);
 
-        return redirect()->route('user.reservation.home');
+        // ユーザー登録イベントを発行
+        event(new Registered($user));
+
+        return redirect()->route('verification.notice');
     }
 }

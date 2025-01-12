@@ -1,46 +1,45 @@
 @extends('layouts.app')
 
-@section('title', 'ユーザー登録')
+@section('title', '新規会員登録')
 
 @section('content')
-    <h2 class="text-center mb-4 mt-4">ユーザー登録</h2>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
-        <div class="mb-3">
-            <label for="name" class="form-label">ユーザー名</label>
-            @error('name')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
-            <input id="name" type="text" name="name" class="form-control" value="{{ old('name') }}" autofocus>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4>新規会員登録</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ route('register') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="name" class="form-label">名前</label>
+                                <input type="text" id="name" name="name" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">メールアドレス</label>
+                                <input type="email" id="email" name="email" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">パスワード</label>
+                                <input type="password" id="password" name="password" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password_confirmation" class="form-label">パスワード確認</label>
+                                <input type="password" id="password_confirmation" name="password_confirmation"
+                                    class="form-control" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">登録する</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="/login" class="text-decoration-none">既にアカウントをお持ちの方はこちら</a>
+                </div>
+            </div>
         </div>
-
-        <div class="mb-3">
-            <label for="email" class="form-label">メールアドレス</label>
-            @error('email')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
-            <input id="email" type="email" name="email" class="form-control" value="{{ old('email') }}">
-        </div>
-
-        <div class="mb-3">
-            <label for="password" class="form-label">パスワード</label>
-            @error('password')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
-            <input id="password" type="password" name="password" class="form-control">
-        </div>
-
-        <div class="mb-3">
-            <label for="password-confirm" class="form-label">パスワード確認</label>
-            @error('password_confirmation')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
-            <input id="password-confirm" type="password" name="password_confirmation" class="form-control">
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100 mt-2">登録</button>
-    </form>
-    {{-- <div class="mt-3 d-flex justify-content-center">
-        <a href="{{ route('home') }}" class="btn btn-outline-secondary mx-2">戻る</a>
-    </div> --}}
+    </div>
 @endsection

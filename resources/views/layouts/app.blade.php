@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>@yield('title', config('app.name', 'Laravel'))</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -35,14 +35,21 @@
 
 <body>
     <div id="app">
-        @include('components.header')
+        @if (Auth::guard('web')->check() || Auth::guard('stylist')->check())
+            @include('components.header')
+        @endauth
         <main>
-            <div class="container">
-                <!-- Main content will be injected here -->
+            @if (Auth::guard('web')->check() || Auth::guard('stylist')->check())
+                <div class="container">
+                    <!-- Main content will be injected here -->
+                    @yield('content')
+                </div>
+            @else
                 @yield('content')
-            </div>
-        </main>
-    </div>
+            @endauth
+
+    </main>
+</div>
 </body>
 
 </html>
