@@ -8,7 +8,7 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\StripeController;
 
 // ユーザー
-Route::prefix('user')->name('user.')->middleware('auth')->group(function () {
+Route::prefix('user')->name('user.')->middleware('auth:web')->group(function () {
   Route::get('reservation/home', [ReservationController::class, 'home'])->name('reservation.home');
   // リダイレクト処理用のルート
   Route::get('reservation/redirect', [ReservationController::class, 'redirect'])->name('reservation.redirect');

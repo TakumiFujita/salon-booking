@@ -37,6 +37,6 @@ class StylistLoginController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect()->route('stylist.login');
+        return to_route('stylist.login');
     }
 }
