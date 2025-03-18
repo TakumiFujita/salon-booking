@@ -1,6 +1,8 @@
 <header class="navbar navbar-expand-lg" style="background-color: #a1887f;">
     <div class="container">
-        <a class="navbar-brand" href="{{ url('/') }}" style="color: #ffffff; font-weight: bold;">
+        <a class="navbar-brand"
+            href="{{ Auth::guard('web')->check() ? route('user.reservation.home') : (Auth::guard('stylist')->check() ? route('stylist.home') : route('login')) }}"
+            style="color: #ffffff; font-weight: bold;">
             MySalon
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"

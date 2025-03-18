@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\StripeController;
@@ -15,6 +16,8 @@ Route::prefix('user')->name('user.')->middleware('auth:web')->group(function () 
   Route::get('reservation/confirmation', [ReservationController::class, 'confirmation'])->name('reservation.confirmation');
   Route::post('reservation/store', [ReservationController::class, 'store'])->name('reservation.store');
   Route::get('get-schedule', [ReservationController::class, 'getSchedule']);
+  Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+  Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 // ログイン・ログアウトのルート定義
