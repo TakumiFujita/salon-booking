@@ -13,3 +13,9 @@ Route::post('logout', [StylistLoginController::class, 'logout'])->name('logout')
 Route::middleware(['auth:stylist'])->group(function () {
   Route::get('home', [StylistController::class, 'home'])->name('home');
 });
+
+// スタイリスト用のプロフィール編集ルート
+Route::name('profile.')->middleware('auth:stylist')->group(function () {
+  Route::get('profile/edit', [StylistController::class, 'edit'])->name('edit');
+  Route::put('profile/update', [StylistController::class, 'update'])->name('update');
+});
