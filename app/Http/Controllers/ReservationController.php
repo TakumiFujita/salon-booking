@@ -13,7 +13,6 @@ use App\Mail\ConfirmReservationSalon2User;
 use App\Mail\ReservationNotificationSalon2Stylist;
 use App\Models\Stylist;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
@@ -27,7 +26,14 @@ class ReservationController extends Controller
 
         $schedules = $this->getSchedule();
 
-        $todayReservations = Reservation::whereDate('start_time', $now->format('Y-m-d'))->orderBy('start_time', 'asc')->get();
+        // 現在の週（日曜から土曜まで）を取得
+        $startOfWeek = $now->startOfWeek(); // 今週の日曜日
+        $endOfWeek = $now->endOfWeek(); // 今週の土曜日
+
+        // 予約データを今週の範囲で取得し、ページング
+        $todayReservations = Reservation::whereBetween('start_time', [$startOfWeek, $endOfWeek])
+            ->orderBy('start_time', 'asc')
+            ->paginate();
 
         return view('user.reservation.home', compact('services', 'currentMonth', 'schedules', 'now', 'todayReservations'));
     }

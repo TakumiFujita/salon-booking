@@ -27,6 +27,9 @@
                     <br>
                 @endunless
             @endforeach
+            <div class="mt-4">
+                {{ $todayReservations->links() }}
+            </div>
         @else
             <p>本日の予約はありません</p>
         @endif

@@ -14,15 +14,7 @@ return new class extends Migration
         Schema::create('default_stylist_schedules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('stylist_id')->constrained()->onDelete('cascade'); // スタイリストID
-            $table->enum('weekday', [
-                'monday',
-                'tuesday',
-                'wednesday',
-                'thursday',
-                'friday',
-                'saturday',
-                'sunday'
-            ]); // 曜日
+            $table->unsignedTinyInteger('weekday'); // 0（日曜）〜6（土曜）
             $table->dateTime('start_time'); // 出勤開始日時
             $table->dateTime('end_time');   // 出勤終了日時
             $table->enum('status', ['available', 'unavailable'])->default('available'); // 勤務状態

@@ -27,8 +27,13 @@ class GenerateSchedule extends Command
      */
     public function handle()
     {
-        $startDate = Carbon::now()->addWeeks(5)->startOfWeek();
-        $endDate = $startDate->copy()->endOfWeek();
+        // 今日から5週間後の週の月曜日を取得
+        $startDate = Carbon::now()->addWeeks(4)->startOfWeek();
+
+        // その週の最後（=日曜の終わり）
+        $endDate = $startDate->copy()->addDays(6)->endOfDay();
+
+        $this->info("5週間後のスケジュール作成: {$startDate->toDateString()} ～ {$endDate->toDateString()}");
 
         Schedule::generateSchedule($startDate, $endDate);
     }

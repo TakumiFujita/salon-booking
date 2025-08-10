@@ -13,6 +13,11 @@ class DefaultStylistSchedule extends Model
 
     protected $fillable = ['stylist_id', 'weekday', 'start_time', 'end_time', 'status']; // 必要なカラムをfillableに追加
 
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
+    ];
+
     public function stylist()
     {
         return $this->belongsTo(Stylist::class);
