@@ -27,9 +27,6 @@
                     <br>
                 @endunless
             @endforeach
-            <div class="mt-4">
-                {{ $todayReservations->links() }}
-            </div>
         @else
             <p>本日の予約はありません</p>
         @endif
@@ -40,8 +37,8 @@
                 @foreach ($services as $service)
                     <option value="{{ $service->id }}"
                         {{ old('serviced_id', request('service_id')) == $service->id ? 'selected' : '' }}>
-                        {{ $service->name }}（{{ $service->duration }}分）</option>
-                    </option> --}}
+                        {{ $service->name }}（{{ $service->duration }}分）
+                    </option>
                 @endforeach
             </select>
 
@@ -49,6 +46,13 @@
             <input type="hidden" name="time" id="selectedTime">
 
             <h3 class="mt-5">ご希望の来店日時を選択してください</h3>
+            @if ($weekOffset > 0)
+                <a href="{{ route('user.reservation.home', ['week' => $weekOffset - 1]) }}">前へ</a>
+            @endif
+            @if ($weekOffset < 1)
+                <a href="{{ route('user.reservation.home', ['week' => $weekOffset + 1]) }}">次へ</a>
+            @endif
+
             <div id="schedule">
                 @error('time')
                     <div class="alert alert-danger">{{ $message }}</div>

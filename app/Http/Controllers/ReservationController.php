@@ -18,24 +18,28 @@ use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
-    public function home()
+    public function home(Request $request)
     {
         $services = Service::all();
         $now = Carbon::now();
         $currentMonth = $now->isoFormat('YYYY年MM月');
 
-        $schedules = $this->getSchedule();
+        $weekOffset = (int)$request->query('week', 0); // 0=今週、1=翌週
 
-        // 現在の週（日曜から土曜まで）を取得
-        $startOfWeek = $now->startOfWeek(); // 今週の日曜日
-        $endOfWeek = $now->endOfWeek(); // 今週の土曜日
+        // 今週もしくは翌週（日曜から土曜まで）を取得
+        $startOfWeek = $now->copy()->addWeeks($weekOffset)->startOfWeek();
+        $endOfWeek = $now->copy()->addWeeks($weekOffset)->endOfWeek();
 
-        // 予約データを今週の範囲で取得し、ページング
-        $todayReservations = Reservation::whereBetween('start_time', [$startOfWeek, $endOfWeek])
-            ->orderBy('start_time', 'asc')
-            ->paginate();
+        $schedules = $this->getSchedule($startOfWeek);
 
-        return view('user.reservation.home', compact('services', 'currentMonth', 'schedules', 'now', 'todayReservations'));
+        // 本日の予約を取得
+        $todayStart = Carbon::today()->startOfDay(); // 今日の0時0分0秒
+        $todayEnd = Carbon::today()->endOfDay();     // 今日の23時59分59秒
+        $todayReservations = Reservation::whereBetween('start_time', [$todayStart, $todayEnd])
+            ->orderBy('start_time')
+            ->get();
+
+        return view('user.reservation.home', compact('services', 'currentMonth', 'schedules', 'weekOffset', 'now', 'todayReservations'));
     }
 
     public function redirect(Request $request)
@@ -49,22 +53,21 @@ class ReservationController extends Controller
         return redirect()->route('user.reservation.home');
     }
 
-    public function getSchedule(int $serviceId = 1)
+    public function getSchedule(Carbon $startOfWeek, int $serviceId = 1)
     {
         // $serviceId = $request->get('service_id');
         $service = Service::findOrFail($serviceId);
         $duration = $service->duration;
 
-        // 今日から1週間分のスケジュールを取得
+        // 基準日から1週間分のスケジュールを取得
         $weekDays = [];
-        $now = Carbon::now();
         for ($i = 0; $i < 7; $i++) {
-            $weekDays[] = $now->copy()->addDays($i);
+            $weekDays[] = $startOfWeek->copy()->addDays($i);
         }
 
         // 時間スロットの設定
         $timeSlots = $this->generateTimeSlots();
-        $result = $this->getWeekSchedules($weekDays, $timeSlots, $serviceId, $duration);
+        $result = $this->getWeekSchedules($weekDays, $startOfWeek, $timeSlots, $serviceId, $duration);
         $weekSchedules = $result;
 
         return [
@@ -86,14 +89,12 @@ class ReservationController extends Controller
         return $timeSlots;
     }
 
-    private function getWeekSchedules($weekDays, $timeSlots, $serviceId, $duration = null)
+    private function getWeekSchedules($weekDays, $startOfWeek, $timeSlots, $serviceId, $duration = null)
     {
         $now = Carbon::now();
+        $endOfWeek = $startOfWeek->copy()->addDays(6)->setTime(19, 30); // 6日後の19:30
 
-        $start = $now->copy()->setTime(9, 0); // 今日の09:00
-        $end = $now->copy()->addDays(6)->setTime(19, 30); // 6日後の19:30
-
-        $schedules = Schedule::whereBetween('start_time', [$start, $end])->get();
+        $schedules = Schedule::whereBetween('start_time', [$startOfWeek, $endOfWeek])->get();
 
         $weekSchedules = [];
         $isPasts = [];
