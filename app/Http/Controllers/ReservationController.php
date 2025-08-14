@@ -142,13 +142,14 @@ class ReservationController extends Controller
 
     public function store(ReservationRequest $request)
     {
+        $validated = $request->validated();
         $stylistId = '1';
-        $date = Carbon::parse($request->input('date'))->format('Y-m-d');
-        $startTime = Carbon::parse($date . ' ' . $request->input('start_time'));
-        $duration = (int) $request->input('duration');
+        $date = Carbon::parse($validated['date'])->format('Y-m-d');
+        $startTime = Carbon::parse($date . ' ' . $validated['start_time']);
+        $duration = (int) $validated['duration'];
         $endTime = $startTime->copy()->addMinutes($duration);
 
-        $validatedData = array_merge($request->validated(), [
+        $validatedData = array_merge($validated, [
             'stylist_id' => $stylistId,
             'user_id' => Auth::id(),
             'start_time' => $startTime->format('Y-m-d H:i:s'),
