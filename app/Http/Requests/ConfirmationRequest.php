@@ -60,6 +60,12 @@ class ConfirmationRequest extends FormRequest
             if ($conflictingReservation) {
                 $validator->errors()->add('time', '選択したサービスの終了時間が既に予約済みの時間帯と重なっています。別の時間を選択してください。');
             }
+
+            // 予約可能な最終時間を超過して予約しようとしていないかチェック
+            $latestEndTime = Carbon::parse($date)->setTime(20, 0);
+            if ($endDateTime->greaterThan($latestEndTime)) {
+                $validator->errors()->add('time', '選択したサービスの予約可能な最終時間を超えています。別の時間を選択してください。');
+            }
         });
     }
 }

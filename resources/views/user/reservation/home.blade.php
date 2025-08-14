@@ -7,7 +7,7 @@
         </div>
     @endif
     <div class="container py-5">
-        <h3>本日（{{ $now->isoFormat('YYYY年MM月DD日') }}）のご予約状況</h3>
+        <h3 class="mb-4">本日（{{ $now->isoFormat('YYYY年MM月DD日') }}）のご予約状況</h3>
         @if ($todayReservations->isNotEmpty())
             @foreach ($todayReservations as $reservation)
                 <tr>
@@ -36,7 +36,7 @@
             <select id="service-select" class="form-select" name="service_id">
                 @foreach ($services as $service)
                     <option value="{{ $service->id }}"
-                        {{ old('serviced_id', request('service_id')) == $service->id ? 'selected' : '' }}>
+                        {{ old('service_id', request('service_id')) == $service->id ? 'selected' : '' }}>
                         {{ $service->name }}（{{ $service->duration }}分）
                     </option>
                 @endforeach
@@ -45,18 +45,28 @@
             <input type="hidden" name="date" id="selectedDate">
             <input type="hidden" name="time" id="selectedTime">
 
-            <h3 class="mt-5">ご希望の来店日時を選択してください</h3>
-            @if ($weekOffset > 0)
-                <a href="{{ route('user.reservation.home', ['week' => $weekOffset - 1]) }}">前へ</a>
-            @endif
-            @if ($weekOffset < 1)
-                <a href="{{ route('user.reservation.home', ['week' => $weekOffset + 1]) }}">次へ</a>
-            @endif
+            <h3 class="mt-5 mb-3">ご希望の来店日時を選択してください</h3>
+            <div class="alert alert-warning p-3 mb-3">
+                <p class="fw-bold mb-2">
+                    ※サービス内容により、予約可能な最終時間が異なります。
+                </p>
+                <ul class="list-unstyled mb-0">
+                    <li><span class="fw-semibold">カット＆パーマ</span>：<span class="fw-bold text-danger">17:30</span></li>
+                    <li><span class="fw-semibold">カット＆カラー</span>：<span class="fw-bold text-danger">18:00</span></li>
+                    <li><span class="fw-semibold">カット</span>：<span class="fw-bold text-danger">19:00</span></li>
+                </ul>
+            </div>
 
             <div id="schedule">
                 @error('time')
                     <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
+                @if ($weekOffset > 0)
+                    <a href="{{ route('user.reservation.home', ['week' => $weekOffset - 1]) }}">前へ</a>
+                @endif
+                @if ($weekOffset < 1)
+                    <a href="{{ route('user.reservation.home', ['week' => $weekOffset + 1]) }}">次へ</a>
+                @endif
                 <table id="time-slots" class="table">
                     <thead>
                         <tr>
