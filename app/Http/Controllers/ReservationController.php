@@ -111,7 +111,7 @@ class ReservationController extends Controller
                 }
                 // スケジュールの状態と過ぎているかどうかの情報をweekSchedulesに格納
                 $weekSchedules[$day->format('Y-m-d')][$timeSlot] = [
-                    'status' => $schedule ? ($schedule->status === 'available' ? '◯' : '✗') : 'unavailable',
+                    'status' => $schedule ? ($schedule->status === 'available' ? '◯' : '✗') : '✗',
                     'isPast' => $isPast,
                 ];
             }
