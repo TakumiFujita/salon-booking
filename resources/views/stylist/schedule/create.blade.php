@@ -34,7 +34,7 @@
                             required>
                             @for ($hour = 9; $hour <= 20; $hour++)
                                 <option value="{{ sprintf('%02d', $hour) }}"
-                                    {{ isset($existingSchedules[$day]) && \Carbon\Carbon::parse($existingSchedules[$day]->start_time)->format('H') == sprintf('%02d', $hour) ? 'selected' : ($hour == 9 ? 'selected' : '') }}>
+                                    {{ old($day . '_start_hour', isset($existingSchedules[$day]) ? \Carbon\Carbon::parse($existingSchedules[$day]->start_time)->format('H') : 9) == sprintf('%02d', $hour) ? 'selected' : '' }}>
                                     {{ sprintf('%02d', $hour) }}
                                 </option>
                             @endfor
@@ -56,7 +56,7 @@
                             required>
                             @for ($hour = 9; $hour <= 20; $hour++)
                                 <option value="{{ sprintf('%02d', $hour) }}"
-                                    {{ isset($existingSchedules[$day]) && \Carbon\Carbon::parse($existingSchedules[$day]->end_time)->format('H') == sprintf('%02d', $hour) ? 'selected' : ($hour == 20 ? 'selected' : '') }}>
+                                    {{ old($day . '_end_hour', isset($existingSchedules[$day]) ? \Carbon\Carbon::parse($existingSchedules[$day]->end_time)->format('H') : 20) == sprintf('%02d', $hour) ? 'selected' : '' }}>
                                     {{ sprintf('%02d', $hour) }}
                                 </option>
                             @endfor
