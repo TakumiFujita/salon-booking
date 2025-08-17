@@ -90,11 +90,11 @@
                                                 $schedules['weekSchedules'][$weekDay->format('Y-m-d')][$timeSlot] ??
                                                 null;
                                         @endphp
-                                        @if (!$scheduleData || $scheduleData['isPast'])
+                                        @if (!$scheduleData || $scheduleData['isPast'] || $scheduleData['status'] === '✗')
                                             <button class="btn" disabled
                                                 style="border-color: transparent; opacity: 1;">✗</button>
                                         @else
-                                            <button type="submit" class="btn btn-link"
+                                            <button type="submit" class="btn"
                                                 onclick="setReservation('{{ $weekDay->format('Y-m-d') }}', '{{ $timeSlot }}')">
                                                 {{ $scheduleData['status'] }}
                                             </button>
