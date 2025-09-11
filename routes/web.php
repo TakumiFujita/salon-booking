@@ -10,14 +10,18 @@ use App\Http\Controllers\StripeController;
 
 // ユーザー
 Route::prefix('user')->name('user.')->middleware('auth:web')->group(function () {
-  Route::get('reservation/home', [ReservationController::class, 'home'])->name('reservation.home');
-  // リダイレクト処理用のルート
-  Route::get('reservation/redirect', [ReservationController::class, 'redirect'])->name('reservation.redirect');
-  Route::get('reservation/confirmation', [ReservationController::class, 'confirmation'])->name('reservation.confirmation');
-  Route::post('reservation/store', [ReservationController::class, 'store'])->name('reservation.store');
-  Route::get('get-schedule', [ReservationController::class, 'getSchedule']);
-  Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-  Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::prefix('reservation')->name('reservation.')->group(function () {
+        Route::get('/home', [ReservationController::class, 'home'])->name('home');
+        Route::get('/index', [ReservationController::class, 'index'])->name('index');
+        // リダイレクト処理用のルート
+        Route::get('/redirect', [ReservationController::class, 'redirect'])->name('redirect');
+        Route::get('/confirmation', [ReservationController::class, 'confirmation'])->name('confirmation');
+        Route::post('/store', [ReservationController::class, 'store'])->name('store');
+    });
+
+    Route::get('get-schedule', [ReservationController::class, 'getSchedule']);
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 // ログイン・ログアウトのルート定義

@@ -15,6 +15,7 @@ use App\Models\Stylist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ReservationController extends Controller
 {
@@ -40,6 +41,15 @@ class ReservationController extends Controller
             ->get();
 
         return view('user.reservation.home', compact('services', 'currentMonth', 'schedules', 'weekOffset', 'now', 'todayReservations'));
+    }
+
+    public function index(Request $request)
+    {
+        $reservations = Reservation::where('user_id', $request->user()->id)
+            ->orderBy('start_time', 'desc')
+            ->get();
+
+        return view('user.reservation.index', compact('reservations'));
     }
 
     public function redirect(Request $request)
