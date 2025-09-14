@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ConfirmationRequest;
 use Carbon\Carbon;
 use App\Http\Requests\ReservationRequest;
+use App\Models\Payment;
 use App\Models\Reservation;
 use App\Models\Schedule;
 use App\Models\Service;
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Stripe\Stripe;
+use Stripe\Checkout\Session;
 
 class ReservationController extends Controller
 {
@@ -55,6 +58,34 @@ class ReservationController extends Controller
     public function redirect(Request $request)
     {
         if ($request->query('status') === 'success') {
+
+            // セッションIDを取得（checkout() 側で success_url に付けておく必要あり）
+            $sessionId = $request->query('session_id');
+
+            $reservationId = $request->query('reservation_id');
+
+
+            if ($sessionId) {
+                Stripe::setApiKey(config('services.stripe.secret'));
+
+                // 支払い情報のidを取得
+                $session = Session::retrieve($sessionId);
+                $stripePaymentIntentId = $session->payment_intent;
+
+                $payment = Payment::firstOrNew([
+                    'stripe_payment_intent_id' => $stripePaymentIntentId,
+                ]);
+
+                $payment->user_id = Auth::id();
+                if (! $payment->user_id) {
+                    abort(403, 'ログインが必要です');
+                }
+                $payment->reservation_id = $reservationId;
+                $payment->amount = $session->amount_total;
+                $payment->status = 'succeed';
+                $payment->save();
+            }
+
             session()->flash('message', '決済が成功しました！');
         } elseif ($request->query('status') === 'cancel') {
             session()->flash('message', '決済がキャンセルされました。');

@@ -42,6 +42,7 @@ return [
             3 => env('STRIPE_PRICE_ID_CUT_PERM'),
             4 => env('STRIPE_PRICE_ID_SHAMPOO_BLOW'),
             5 => env('STRIPE_PRICE_ID_TREATMENT'),
-        ]
+        ],
+        'secret' => env('STRIPE_SECRET'),
     ]
 ];

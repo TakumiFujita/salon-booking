@@ -7,29 +7,37 @@
         </div>
     @endif
     <div class="container py-5">
-        <h3 class="mb-4">本日（{{ $now->isoFormat('YYYY年MM月DD日') }}）のご予約状況</h3>
-        @if ($todayReservations->isNotEmpty())
-            @foreach ($todayReservations as $reservation)
-                <tr>
-                    <td>
-                        ・{{ $reservation->start_time->isoFormat('HH時mm分') }}〜：
-                        {{ $reservation->service->name }}&nbsp;
-                        <form method="POST"
-                            action="{{ route('checkout.session', ['service_id' => $reservation->service_id]) }}"
-                            id="stripe-form">
-                            @csrf
-                            <input type="hidden" name="service_id" value={{ $reservation->service_id }}>
-                            <button type="submit" id="card-button" class="btn btn-sm btn-primary">決済をする</button>
-                        </form>
-                    </td>
-                </tr>
-                @unless ($loop->last)
-                    <br>
-                @endunless
-            @endforeach
-        @else
-            <p>本日の予約はありません</p>
-        @endif
+        <h3 class="mb-0">本日（{{ $now->isoFormat('YYYY年MM月DD日') }}）のご予約状況</h3>
+        <table class="table table-borderless">
+            <tbody>
+                @if ($todayReservations->isNotEmpty())
+                    @foreach ($todayReservations as $reservation)
+                        <tr>
+                            <td>
+                                ・{{ $reservation->start_time->isoFormat('HH時mm分') }}〜：
+                                {{ $reservation->service->name }}&nbsp;
+                                @if ($reservation->payment?->status === 'succeed')
+                                    <span class="badge bg-success">支払い済み</span>
+                                @else
+                                    <form method="POST" class="d-inline"
+                                        action="{{ route('checkout.session', ['service_id' => $reservation->service_id]) }}">
+                                        @csrf
+                                        <input type="hidden" name="service_id" value="{{ $reservation->service_id }}">
+                                        <input type="hidden" name="reservation_id" value="{{ $reservation->id }}">
+                                        <button type="submit" class="btn btn-sm btn-primary">決済する</button>
+                                    </form>
+                                @endif
+                            </td>
+                        </tr>
+                        @unless ($loop->last)
+                            <br>
+                        @endunless
+                    @endforeach
+                @else
+                    <p>本日の予約はありません</p>
+                @endif
+            </tbody>
+        </table>
         <form action="{{ route('user.reservation.confirmation') }}" method="GET">
             @csrf
             <h3 class="mt-5">サービスを選択してください</h3>

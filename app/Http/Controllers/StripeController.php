@@ -14,9 +14,23 @@ class StripeController extends Controller
         session()->flash('stripe_success_message', '決済が成功しました！');
         session()->flash('stripe_cancel_message', '決済がキャンセルされました。');
 
-        return $request->user()->checkout([$stripe_price_id => 1], [
-            'success_url' => route('user.reservation.redirect', ['status' => 'success']),
-            'cancel_url' => route('user.reservation.redirect', ['status' => 'cancel']),
+        // URLを作成
+        $successUrl = route('user.reservation.redirect', [
+            'status' => 'success',
+            'reservation_id' => $request->reservation_id,
         ]);
+        $cancelUrl = route('user.reservation.redirect', ['status' => 'cancel']);
+
+        // {CHECKOUT_SESSION_ID} を文字列として追加
+        $successUrl .= '&session_id={CHECKOUT_SESSION_ID}';
+
+        // Stripe Checkout にリダイレクト
+        return $request->user()->checkout(
+            [$stripe_price_id => 1],
+            [
+                'success_url' => $successUrl,
+                'cancel_url' => $cancelUrl,
+            ]
+        );
     }
 }

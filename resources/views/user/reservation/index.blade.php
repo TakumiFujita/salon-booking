@@ -20,7 +20,7 @@
                             <th scope="col">時間</th>
                             <th scope="col">サービス</th>
                             <th scope="col">スタイリスト</th>
-                            <th scope="col">ステータス</th>
+                            <th scope="col">状態</th>
                             <th scope="col">支払い</th>
                         </tr>
                     </thead>
@@ -43,14 +43,14 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <span>{{ $reservation->payment?->stripe_status }}</span>
-                                    @if ($reservation->payment?->stripe_status === 'succeeded')
+                                    @if ($reservation->payment?->status === 'succeed')
                                         <span class="badge bg-success">支払い済み</span>
                                     @else
                                         <form method="POST"
                                             action="{{ route('checkout.session', ['service_id' => $reservation->service_id]) }}">
                                             @csrf
                                             <input type="hidden" name="service_id" value="{{ $reservation->service_id }}">
+                                            <input type="hidden" name="reservation_id" value="{{ $reservation->id }}">
                                             <button type="submit" class="btn btn-sm btn-primary">決済する</button>
                                         </form>
                                     @endif
