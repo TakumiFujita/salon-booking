@@ -7,7 +7,7 @@
         </div>
     @endif
     <div class="container py-5">
-        <h3 class="mb-0">本日（{{ $now->isoFormat('YYYY年MM月DD日') }}）のご予約状況</h3>
+        <h3>本日（{{ $now->isoFormat('YYYY年MM月DD日') }}）のご予約状況</h3>
         <table class="table table-borderless">
             <tbody>
                 @if ($todayReservations->isNotEmpty())
@@ -69,12 +69,27 @@
                 @error('time')
                     <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
-                @if ($weekOffset > 0)
-                    <a href="{{ route('user.reservation.home', ['week' => $weekOffset - 1]) }}">前へ</a>
-                @endif
-                @if ($weekOffset < 1)
-                    <a href="{{ route('user.reservation.home', ['week' => $weekOffset + 1]) }}">次へ</a>
-                @endif
+                <div class="d-flex justify-content-center mt-3">
+                    <ul class="pagination">
+                        @if ($weekOffset > 0)
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="{{ route('user.reservation.home', ['week' => $weekOffset - 1]) }}">
+                                    前へ
+                                </a>
+                            </li>
+                        @endif
+                        @if ($weekOffset < 1)
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="{{ route('user.reservation.home', ['week' => $weekOffset + 1]) }}">
+                                    次へ
+                                </a>
+                            </li>
+                        @endif
+                    </ul>
+                </div>
+
                 <table id="time-slots" class="table">
                     <thead>
                         <tr>
